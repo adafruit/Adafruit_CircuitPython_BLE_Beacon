@@ -82,6 +82,14 @@ class _BeaconAdvertisement(Advertisement):
     """The path loss constant, typically between 2-4"""
 
     @property
+    def uuid(self) -> bytes:
+        raise NotImplementedError("Must be implemented in beacon subclass")
+
+    @uuid.setter
+    def uuid(self, id: bytes) -> None:
+        raise NotImplementedError("Must be implemented in beacon subclass")
+
+    @property
     def distance(self) -> float:
         """The approximate distance to the beacon"""
 
@@ -89,7 +97,11 @@ class _BeaconAdvertisement(Advertisement):
 
     @property
     def beacon_tx_power(self) -> int:
-        raise NotImplementedError("Must be defined in beacon subclass")
+        raise NotImplementedError("Must be implemented in beacon subclass")
+
+    @beacon_tx_power.setter
+    def beacon_txt_power(self, power: int) -> None:
+        raise NotImplementedError("Must be implemented in beacon subclass")
 
     
 class iBeaconAdvertisement(_BeaconAdvertisement):
@@ -122,7 +134,6 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
         uuid_msb, uuid_lsb = struct.unpack(">QQ", id)
         self._set_struct_index(3, uuid_msb)
         self._set_struct_index(4, uuid_lsb)
-
 
     @property
     def major(self) -> int:
@@ -158,4 +169,5 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
         return temp_tuple[index]
 
     def _init_struct(self) -> None:
-        self._beacon_data = (_APPLE_COMPANY_ID_FLIPPED, _IBEACON_TYPE, _IBEACON_LENGTH, 0, 0, 0, 0, 0)
+        apple_id_flipped = struct.unpack(">H", struct.pack("<H", _APPLE_COMPANY_ID))
+        self._beacon_data = (apple_id_flipped, _IBEACON_TYPE, _IBEACON_LENGTH, 0, 0, 0, 0, 0)
