@@ -85,7 +85,7 @@ class _BeaconAdvertisement(Advertisement):
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @uuid.setter
-    def uuid(self, id: bytes) -> None:
+    def uuid(self, uuid: bytes) -> None:
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @property
@@ -138,8 +138,8 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
         return struct.pack(">QQ", uuid_msb, uuid_lsb)
 
     @uuid.setter
-    def uuid(self, id: bytes) -> None:
-        uuid_msb, uuid_lsb = struct.unpack(">QQ", id)
+    def uuid(self, uuid: bytes) -> None:
+        uuid_msb, uuid_lsb = struct.unpack(">QQ", uuid)
         self._set_struct_index(3, uuid_msb)
         self._set_struct_index(4, uuid_lsb)
 
