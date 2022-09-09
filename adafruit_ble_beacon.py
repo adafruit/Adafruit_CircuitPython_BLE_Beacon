@@ -36,24 +36,21 @@ import struct
 from micropython import const
 import _bleio
 from adafruit_ble.advertising import Advertisement, Struct, AdvertisingDataField
-from adafruit_ble.advertising.standard import ManufacturerData
 
 try:
-    from typing import Optional, Union, Any, Type, Tuple, Sequence
+    from typing import Optional, Union, Type, Tuple, Sequence
 except ImportError:
     pass
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/tekktrik/Adafruit_CircuitPython_BLE_Beacon.git"
 
+
 _MANUFACTURING_DATA_ADT = const(0xFF)
 
 _APPLE_COMPANY_ID = const(0x004C)
 _IBEACON_TYPE = const(0x02)
 _IBEACON_LENGTH = const(0x15)
-
-# TODO: fix this
-_APPLE_COMPANY_ID_FLIPPED = const(0x4C00)
 
 
 class MultiStruct(AdvertisingDataField):
@@ -65,7 +62,7 @@ class MultiStruct(AdvertisingDataField):
 
     def __get__(
         self, obj: Optional["Advertisement"], cls: Type["Advertisement"]
-    ) -> Optional[Union[Tuple, "Struct"]]:
+    ) -> Optional[Union[Tuple, "MultiStruct"]]:
         if obj is None:
             return self
         if self._adt not in obj.data_dict:
@@ -75,14 +72,16 @@ class MultiStruct(AdvertisingDataField):
     def __set__(self, obj: "Advertisement", value: Sequence) -> None:
         obj.data_dict[self._adt] = struct.pack(self._format, *value)
 
+
 class _BeaconAdvertisement(Advertisement):
     """Advertisement for location beacons like iBeacon"""
 
-    path_loss_const: int = 3
+    path_loss_const: float = 3
     """The path loss constant, typically between 2-4"""
 
     @property
     def uuid(self) -> bytes:
+        """The UUID of the beacon"""
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @uuid.setter
@@ -91,22 +90,31 @@ class _BeaconAdvertisement(Advertisement):
 
     @property
     def distance(self) -> float:
-        """The approximate distance to the beacon"""
-
-        return 10**((self.beacon_tx_power - self.rssi) / (10*self.path_loss_const))
+        """The approximate distance to the beacon, in meters"""
+        return 10 ** ((self.beacon_tx_power - self.rssi) / (10 * self.path_loss_const))
 
     @property
     def beacon_tx_power(self) -> int:
+        """The beacon TX power"""
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @beacon_tx_power.setter
     def beacon_txt_power(self, power: int) -> None:
         raise NotImplementedError("Must be implemented in beacon subclass")
 
-    
-class iBeaconAdvertisement(_BeaconAdvertisement):
 
-    match_prefixes = (struct.pack("<BHBB", _MANUFACTURING_DATA_ADT, _APPLE_COMPANY_ID, _IBEACON_TYPE, _IBEACON_LENGTH),)
+class iBeaconAdvertisement(_BeaconAdvertisement):
+    """An iBeacon advertisement"""
+
+    match_prefixes = (
+        struct.pack(
+            "<BHBB",
+            _MANUFACTURING_DATA_ADT,
+            _APPLE_COMPANY_ID,
+            _IBEACON_TYPE,
+            _IBEACON_LENGTH,
+        ),
+    )
 
     _data_format = ">HBBQQHHb"
     _beacon_data = MultiStruct(_data_format, advertising_data_type=0xFF)
@@ -117,14 +125,14 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
     _minor_index = 6
     _beacon_tx_power_index = 7
 
-
-    def __init__(self, *, entry: Optional[_bleio.ScanEntry] = None, ) -> None:
+    def __init__(self, *, entry: Optional[_bleio.ScanEntry] = None) -> None:
         super().__init__(entry=entry)
         if not entry:
             self._init_struct()
-    
+
     @property
     def uuid(self) -> bytes:
+        """The UUID of the beacon"""
         uuid_msb = self._get_struct_index(self._uuid_msb_index)
         uuid_lsb = self._get_struct_index(self._uuid_lsb_index)
         return struct.pack(">QQ", uuid_msb, uuid_lsb)
@@ -137,6 +145,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @property
     def major(self) -> int:
+        """The major store number for the beacon"""
         return self._get_struct_index(self._major_index)
 
     @major.setter
@@ -145,6 +154,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @property
     def minor(self) -> int:
+        """The minor store number for the beacon"""
         return self._get_struct_index(self._minor_index)
 
     @minor.setter
@@ -153,6 +163,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @property
     def beacon_tx_power(self) -> int:
+        """The beacon TX power"""
         return self._get_struct_index(self._beacon_tx_power_index)
 
     @beacon_tx_power.setter
@@ -170,4 +181,13 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     def _init_struct(self) -> None:
         apple_id_flipped = struct.unpack(">H", struct.pack("<H", _APPLE_COMPANY_ID))
-        self._beacon_data = (apple_id_flipped, _IBEACON_TYPE, _IBEACON_LENGTH, 0, 0, 0, 0, 0)
+        self._beacon_data = (
+            apple_id_flipped,
+            _IBEACON_TYPE,
+            _IBEACON_LENGTH,
+            0,
+            0,
+            0,
+            0,
+            0,
+        )
