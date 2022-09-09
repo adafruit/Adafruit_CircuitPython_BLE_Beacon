@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2017 Scott Shawcroft, written for Adafruit Industries
+# SPDX-FileCopyrightText: Copyright (c) 2022 Alec Delaney for Adafruit Industries
+#
+# SPDX-License-Identifier: Unlicense
+
 import time
 from adafruit_ble import BLERadio
 from adafruit_ble_beacon import iBeaconAdvertisement
