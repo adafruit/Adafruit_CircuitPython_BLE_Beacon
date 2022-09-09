@@ -171,7 +171,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
         return temp_tuple[index]
 
     def _init_struct(self) -> None:
-        apple_id_flipped = struct.unpack(">H", struct.pack("<H", _APPLE_COMPANY_ID))
+        apple_id_flipped = struct.unpack(">H", struct.pack("<H", _APPLE_COMPANY_ID))[0]
         self._beacon_data = (
             apple_id_flipped,
             _IBEACON_TYPE,
