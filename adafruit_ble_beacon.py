@@ -92,7 +92,6 @@ class _BeaconAdvertisement(Advertisement):
         raise NotImplementedError("Must be defined in beacon subclass")
 
     
-
 class iBeaconAdvertisement(_BeaconAdvertisement):
 
     match_prefixes = (struct.pack("<BHBB", _MANUFACTURING_DATA_ADT, _APPLE_COMPANY_ID, _IBEACON_TYPE, _IBEACON_LENGTH),)
@@ -100,15 +99,22 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
     _data_format = ">HBBQQHHb"
     _beacon_data = MultiStruct(_data_format, advertising_data_type=0xFF)
 
+    _uuid_msb_index = 3
+    _uuid_lsb_index = 4
+    _major_index = 5
+    _minor_index = 6
+    _beacon_tx_power_index = 7
+
+
     def __init__(self, *, entry: Optional[_bleio.ScanEntry] = None, ) -> None:
         super().__init__(entry=entry)
-
         if not entry:
             self._init_struct()
     
     @property
     def uuid(self) -> bytes:
-        _, _, _, uuid_msb, uuid_lsb, _, _, _ = self._beacon_data
+        uuid_msb = self._get_struct_index(self._uuid_msb_index)
+        uuid_lsb = self._get_struct_index(self._uuid_lsb_index)
         return struct.pack(">QQ", uuid_msb, uuid_lsb)
 
     @uuid.setter
@@ -120,18 +126,15 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @property
     def major(self) -> int:
-        _, _, _, _, _, major, _, _ = self._beacon_data
-        return major
+        return self._get_struct_index(self._major_index)
 
     @major.setter
     def major(self, number: int) -> None:
-        #flipped = self.flip_endian(number)
         self._set_struct_index(5, number)
 
     @property
     def minor(self) -> int:
-        _, _, _, _, _, _, minor, _ = self._beacon_data
-        return minor
+        return self._get_struct_index(self._minor_index)
 
     @minor.setter
     def minor(self, number: int) -> None:
@@ -139,8 +142,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @property
     def beacon_tx_power(self) -> int:
-        _, _, _, _, _, _, _, tx_power = self._beacon_data
-        return tx_power
+        return self._get_struct_index(self._beacon_tx_power_index)
 
     @beacon_tx_power.setter
     def beacon_tx_power(self, power: int) -> None:
@@ -148,14 +150,12 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     def _set_struct_index(self, index: int, value: int) -> int:
         current_beacon_data = list(self._beacon_data)
-        flipped = self.flip_endian(value, index)
-        current_beacon_data[index] = flipped
+        current_beacon_data[index] = value
         self._beacon_data = current_beacon_data
+
+    def _get_struct_index(self, index: int) -> int:
+        temp_tuple = self._beacon_data
+        return temp_tuple[index]
 
     def _init_struct(self) -> None:
         self._beacon_data = (_APPLE_COMPANY_ID_FLIPPED, _IBEACON_TYPE, _IBEACON_LENGTH, 0, 0, 0, 0, 0)
-
-    def flip_endian(self, number: int, index: int):
-        index_format = self._data_format[index+1]
-        temp_bytes = struct.pack("<" + index_format, number)
-        return struct.unpack("<" + index_format, temp_bytes)[0]
