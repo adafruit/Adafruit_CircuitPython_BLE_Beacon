@@ -35,7 +35,7 @@ Implementation Notes
 import struct
 from micropython import const
 import _bleio
-from adafruit_ble.advertising import Advertisement, Struct, AdvertisingDataField
+from adafruit_ble.advertising import Advertisement, AdvertisingDataField
 
 try:
     from typing import Optional, Union, Type, Tuple, Sequence
