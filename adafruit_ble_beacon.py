@@ -131,8 +131,8 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
     @uuid.setter
     def uuid(self, uuid: bytes) -> None:
         uuid_msb, uuid_lsb = struct.unpack(">QQ", uuid)
-        self._set_struct_index(3, uuid_msb)
-        self._set_struct_index(4, uuid_lsb)
+        self._set_struct_index(self._uuid_msb_index, uuid_msb)
+        self._set_struct_index(self._uuid_lsb_index, uuid_lsb)
 
     @property
     def major(self) -> int:
@@ -141,7 +141,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @major.setter
     def major(self, number: int) -> None:
-        self._set_struct_index(5, number)
+        self._set_struct_index(self._major_index, number)
 
     @property
     def minor(self) -> int:
@@ -150,7 +150,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @minor.setter
     def minor(self, number: int) -> None:
-        self._set_struct_index(6, number)
+        self._set_struct_index(self._minor_index, number)
 
     @property
     def beacon_tx_power(self) -> int:
@@ -159,7 +159,7 @@ class iBeaconAdvertisement(_BeaconAdvertisement):
 
     @beacon_tx_power.setter
     def beacon_tx_power(self, power: int) -> None:
-        self._set_struct_index(7, power)
+        self._set_struct_index(self._beacon_tx_power_index, power)
 
     def _set_struct_index(self, index: int, value: int) -> int:
         current_beacon_data = list(self._beacon_data)
