@@ -99,10 +99,11 @@ class _BeaconAdvertisement(Advertisement):
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @beacon_tx_power.setter
-    def beacon_txt_power(self, power: int) -> None:
+    def beacon_tx_power(self, power: int) -> None:
         raise NotImplementedError("Must be implemented in beacon subclass")
 
 
+# pylint: disable=invalid-name
 class iBeaconAdvertisement(_BeaconAdvertisement):
     """An iBeacon advertisement"""
 
