@@ -13,7 +13,7 @@ Introduction
 
 
 .. image:: https://github.com/adafruit/Adafruit_CircuitPython_BLE_Beacon/workflows/Build%20CI/badge.svg
-    :target: https://github.com/tekktrik/Adafruit_CircuitPython_BLE_Beacon/actions
+    :target: https://github.com/adafruit/Adafruit_CircuitPython_BLE_Beacon/actions
     :alt: Build Status
 
 
