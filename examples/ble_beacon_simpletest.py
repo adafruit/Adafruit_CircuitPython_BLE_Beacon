@@ -11,7 +11,6 @@ ble = BLERadio()
 
 while True:
     for entry in ble.start_scan(iBeaconAdvertisement, minimum_rssi=-120, timeout=3):
-        entry: iBeaconAdvertisement
         print("Beacon Power", entry.beacon_tx_power)
         print("UUID:", entry.uuid)
         print("Major", entry.major)
