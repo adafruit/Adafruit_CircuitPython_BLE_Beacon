@@ -10,7 +10,7 @@ from adafruit_ble_beacon import iBeaconAdvertisement
 ble = BLERadio()
 
 advertisement = iBeaconAdvertisement()
-advertisement.uuid = b"circuitPython123"
+advertisement.uuid = b"CircuitPython123"
 advertisement.major = 1
 advertisement.minor = 32
 advertisement.beacon_tx_power = -80
