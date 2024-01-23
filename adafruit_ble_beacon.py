@@ -25,6 +25,7 @@ Implementation Notes
 import struct
 from micropython import const
 import _bleio
+import time
 from adafruit_ble.advertising import Advertisement, AdvertisingDataField
 
 try:
@@ -66,6 +67,11 @@ class MultiStruct(AdvertisingDataField):
 class _BeaconAdvertisement(Advertisement):
     """Advertisement for location beacons like iBeacon"""
 
+
+
+
+
+  
     path_loss_const: float = 3
     """The path loss constant, typically between 2-4"""
 
@@ -89,7 +95,7 @@ class _BeaconAdvertisement(Advertisement):
         raise NotImplementedError("Must be implemented in beacon subclass")
 
     @beacon_tx_power.setter
-    def beacon_tx_power(self, power: int) -> None:
+    def beacon_tx_power(self, power: int, thing: int) -> None:
         raise NotImplementedError("Must be implemented in beacon subclass")
 
 
