@@ -80,7 +80,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install ble-beacon
+    circup install adafruit_ble_beacon
 
 Or the following command to update an existing version:
 
