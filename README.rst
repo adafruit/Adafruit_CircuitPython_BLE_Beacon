@@ -3,7 +3,7 @@ Introduction
 
 
 .. image:: https://readthedocs.org/projects/adafruit-circuitpython-ble-beacon/badge/?version=latest
-    :target: https://docs.circuitpython.org/projects/ble_beacon/en/latest/
+    :target: https://docs.circuitpython.org/projects/ble-beacon/en/latest/
     :alt: Documentation Status
 
 
