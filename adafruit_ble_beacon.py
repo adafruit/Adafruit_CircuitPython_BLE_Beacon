@@ -23,12 +23,13 @@ Implementation Notes
 """
 
 import struct
-from micropython import const
+
 import _bleio
 from adafruit_ble.advertising import Advertisement, AdvertisingDataField
+from micropython import const
 
 try:
-    from typing import Optional, Union, Type, Tuple, Sequence
+    from typing import Optional, Sequence, Tuple, Type, Union
 except ImportError:
     pass
 
@@ -93,7 +94,6 @@ class _BeaconAdvertisement(Advertisement):
         raise NotImplementedError("Must be implemented in beacon subclass")
 
 
-# pylint: disable=invalid-name
 class iBeaconAdvertisement(_BeaconAdvertisement):
     """An iBeacon advertisement"""
 
