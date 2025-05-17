@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: Unlicense
 
 import time
+
 from adafruit_ble import BLERadio
+
 from adafruit_ble_beacon import iBeaconAdvertisement
 
 ble = BLERadio()

@@ -18,7 +18,7 @@ readme = "README.rst"
 authors = [
     {name = "Adafruit Industries", email = "circuitpython@adafruit.com"}
 ]
-urls = {Homepage = "https://github.com/tekktrik/Adafruit_CircuitPython_BLE_Beacon"}
+urls = {Homepage = "https://github.com/adafruit/Adafruit_CircuitPython_BLE_Beacon"}
 keywords = [
     "adafruit",
     "blinka",
